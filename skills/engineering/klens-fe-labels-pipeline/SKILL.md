@@ -1,6 +1,6 @@
 ---
 name: klens-fe-labels-pipeline
-description: Gestisce la pipeline FE + labels repo: raccoglie nuove chiavi i18n, controlla branch su klens-frontend e labels, aggiunge traduzioni en-US/it-IT, esegue check/sync e prepara il commit.
+description: "Gestisce la pipeline FE + labels repo: raccoglie nuove chiavi i18n, controlla branch su klens-frontend e labels, aggiunge traduzioni en-US/it-IT, esegue check/sync e prepara il commit."
 ---
 
 # KLens FE Labels Pipeline

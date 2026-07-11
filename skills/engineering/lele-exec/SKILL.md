@@ -1,6 +1,6 @@
 ---
 name: lele-exec
-description: Drive lele as an execution harness — loop iteratively toward a spec. Trigger as soon as a plan gets approved: instead of coding directly, feed the spec into lele, verify the result, and iterate with session continuity until the spec is met (or max rounds exhausted).
+description: "Drive lele as an execution harness — loop iteratively toward a spec. Trigger as soon as a plan gets approved: instead of coding directly, feed the spec into lele, verify the result, and iterate with session continuity until the spec is met (or max rounds exhausted)."
 argument-hint: "what should lele execute toward? (the spec, often an approved plan)"
 ---
 
