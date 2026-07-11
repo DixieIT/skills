@@ -1,0 +1,17 @@
+{
+  "name": "gmasiero-skills",
+  "skills": [
+    "./skills/engineering/check-branches-from-test",
+    "./skills/engineering/klens-fe-labels-pipeline",
+    "./skills/engineering/lele-exec",
+    "./skills/engineering/to-spec",
+    "./skills/engineering/wayfinder",
+    "./skills/productivity/auto-document",
+    "./skills/productivity/caveman",
+    "./skills/productivity/find-skills",
+    "./skills/productivity/grill-me",
+    "./skills/productivity/handoff",
+    "./skills/productivity/progress-relay",
+    "./skills/productivity/self-reminder-memory"
+  ]
+}
