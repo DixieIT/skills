@@ -16,6 +16,7 @@ Skills I use daily for code work.
 
 **User-invoked**
 
+- **[ticket](./skills/engineering/ticket/SKILL.md)** — Take a YouTrack issue end to end: interview it into a spec, hand it to a lele agent in a Herdr worktree/pane, verify, open the GitLab MR.
 - **[to-spec](./skills/engineering/to-spec/SKILL.md)** — Turn the current conversation into a spec and publish it to the project issue tracker.
 - **[wayfinder](./skills/engineering/wayfinder/SKILL.md)** — Plan a huge chunk of work as a shared map of investigation tickets on your issue tracker.
 

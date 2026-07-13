@@ -1,6 +1,6 @@
 ---
 name: lele-exec
-description: "Drive lele as an execution harness — loop iteratively toward a spec. Trigger as soon as a plan gets approved: instead of coding directly, feed the spec into lele, verify the result, and iterate with session continuity until the spec is met (or max rounds exhausted)."
+description: "Drive lele as an execution harness for an approved spec: feed the spec to lele, verify its output yourself, and iterate with session continuity (lele -p -s <id>) until the spec is met or 5 rounds fail. Trigger the moment a plan is approved — use this instead of implementing the plan directly."
 argument-hint: "what should lele execute toward? (the spec, often an approved plan)"
 ---
 
@@ -25,13 +25,13 @@ spec → lele -p "<spec>" → verify → if pass: done
 
 3. **Verify** — run the app, run tests, check outputs against the spec. "Done" from lele is a claim, not a result. Use concrete commands with expected vs actual output.
 
-4. **Iterate or land** — if verification passes: done, report. If fail: `lele -p -s <id> "<command run, expected vs actual, any errors>"` and loop. The `-s` flag preserves the full conversation history (no context loss). `-r` is an alternative but loses precision after multiple runs in the same project.
+4. **Iterate or land** — if verification passes: done, report. If fail: `lele -p -s <id> "<command run, expected vs actual, any errors>"` and loop.
 
 5. **Escalate** — after 5 rounds of failure-to-verify, stop. Report what was attempted, what broke, and the best next hypothesis. Do not loop beyond 5 without a human call.
 
 ## lele-goal
 
-Installed at `~/.lele/plugins/goal/`. Provides `create_goal`, `update_goal`, `get_goal` as tools the inner model can call. The goal note is injected automatically at session start. No config needed — plugins at `~/.lele/plugins/` are active by default.
+`create_goal`/`update_goal`/`get_goal` tools, active by default (no config). Details: `reference/goal.md`.
 
 ## Sub-agent orchestration
 
