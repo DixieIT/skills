@@ -93,6 +93,6 @@ Rules of thumb:
 
 The `caveman` skill (`skills/productivity/caveman/SKILL.md`) is an extreme expression of the same instinct — readable as a reference for *how* the repo compresses communication, not a style to match verbatim.
 
-## Bundled skill-creator
+## skill-creator
 
-This repo includes a `build-exe` skill in the harness for drafting and testing new skills. Run `load-skill build-exe` to load it.
+`skill-creator` drafts, tests, and optimizes skills — it's not part of this repo, it's a separate plugin available in the harness. Invoke it via the `Skill` tool (`skill-creator:skill-creator`) when creating a new skill or iterating on triggering accuracy.
