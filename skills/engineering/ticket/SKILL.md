@@ -13,8 +13,8 @@ You own this ticket end to end. The steps below pin down the YouTrack/Herdr/GitL
 
 ```
 issue id → get_issue → grill into a spec → post spec as comment
-        → worktree (own tab+pane) + split lele off it → send-text "/goal <spec>" + send-keys enter
-        → send-text "implement it now" + send-keys enter → wait for "Goal achieved" → verify in shell pane
+        → worktree + lele attached → send-text "/goal <spec>" + send-keys enter
+        → send-text "implement it now" + send-keys enter → wait for "Goal achieved" → verify from your own shell
         → if pass: glab mr create, done
           if fail: send-text "failure: ..." + send-keys enter → wait → ...
 ```
@@ -36,17 +36,13 @@ issue id → get_issue → grill into a spec → post spec as comment
 
 4. **Pick the base branch** — ask the user which branch to base off. Repos vary (main, develop, test); don't guess from `main`/`master` alone.
 
-5. **Create the worktree** — `herdr worktree create --branch feature/<ISSUE-ID>-<slug> --base <chosen-branch> --label <ISSUE-ID>`. This spins up its own workspace + tab, with a root pane already sitting at the worktree cwd — that root pane *is* your shell pane, don't create a separate tab for it. If the native helper doesn't fit the repo's layout, fall back to `git fetch origin <chosen-branch>` + `git worktree add`.
+5-7b. **Spin up the worktree + lele, armed with the goal** — mechanical glue for creating the worktree, starting lele on it, setting `/goal`, and telling it to start. Before writing the spec file, fold in whatever environment/toolchain quirks you already know about this repo (required Node/nvm version, "fresh worktrees need `npm install` first", any non-obvious setup step) — lele starts from zero in a brand-new worktree and will otherwise burn rounds rediscovering them itself. Run `scripts/spinup-lele.sh <ISSUE-ID> <chosen-branch> feature/<ISSUE-ID>-<slug> <repo-path> <spec-file> [start-message]` — write the finished spec (plus that environment context) to a temp file, then pass that file's path (it's sent verbatim as `/goal <contents>`). `<repo-path>` is the herdr-registered source repo checkout — always pass it explicitly, herdr's context resolution isn't "this shell's cwd" and an unscoped call can land the worktree on the wrong repo. Prints `{tab_id, pane_id, checkout_path}` on success. If the native worktree helper doesn't fit the repo's layout, fall back to `git fetch origin <chosen-branch>` + `git worktree add` and do the rest by hand.
 
-6. **Split lele off the worktree's root pane** — `herdr agent start "<ISSUE-ID>" --tab <tab_id> --cwd <worktree_path> --split right --no-focus -- lele`, where `<tab_id>` is the tab `worktree create` just returned. One TUI session for the whole ticket — no session id to track, keep talking to the same pane id with `send-text`+`send-keys enter`. The root pane stays a plain shell — this is where you run your own verification commands, not lele's.
-
-7. **Set the goal yourself** — `herdr pane send-text "<lele_pane_id>" "/goal <full spec from step 2>, implement it, verify it compiles/runs, then commit."` then `herdr pane send-keys "<lele_pane_id>" enter`. You are the one invoking `/goal` here, not lele; this sets the objective, shows the status line, and arms lele's own "call `update_goal` complete when done" reminder. Read the pane back to confirm the goal actually registered — the banner `Pursuing goal (…` should be visible — before moving on.
-
-7b. **Tell lele to actually start** — `/goal` only sets the objective, it does not kick off work. Send a second message the same way (`send-text` + `send-keys enter`) telling lele to start implementing now (e.g. "Implementa ora la feature descritta nel goal: ... poi fai commit."). Confirm the pane shows it's working (e.g. "Thinking…") before starting the background wait in step 8.
+    The script only sends — it does not confirm. Read the pane back yourself (`herdr pane read`) to verify the banner shows `Pursuing goal (…` and that it's moved on to working before starting the background wait in step 8.
 
 8. **Watch and steer** — run `herdr wait output "<lele_pane_id>" --match "Goal achieved" --timeout <N>` in the background and follow it with the Monitor tool (or a background Bash task). Check in on the pane periodically with `herdr pane read`/`herdr agent read` while it runs; the moment lele looks stuck, send it a concrete nudge with `send-text`+`send-keys enter` — point it at the fix (the right command, the right file to model after) and let it continue. `get_goal`/`update_goal` are tools inside lele's own session, not something you call directly — you only ever see the goal's state by reading the pane's rendered banner text: `Pursuing goal (…` while running, `Goal achieved (✓ …` once done. When "Goal achieved" fires (or you've steered it to a clear stopping point):
    - `herdr agent read "<ISSUE-ID>"` to see what lele did and its final report.
-   - Verify independently in the shell pane (via `herdr pane send-text`+`send-keys enter` against the shell pane, or plain `herdr pane run` there if it submits reliably in that pane) — run the app (remember `nvm use` first in kite-fe/kite-be), run tests, check outputs against the spec, check `git status`/`git log` in the worktree for actual commits. Treat lele's self-report as a claim to confirm, not a result to trust outright.
+   - Verify independently from your own shell, `cd`'d into `<checkout_path>` — run the app, run tests, check outputs against the spec, check `git status`/`git log` for actual commits. Treat lele's self-report as a claim to confirm, not a result to trust outright.
    - Pass → step 9. Fail (max 5 rounds total) → send-text+send-keys the failure to `<lele_pane_id>` (command run, expected vs actual, any errors), then back to the background wait.
 
 9. **Land it, or escalate** — verified pass: `glab mr create` targeting the chosen base branch, title/body including the issue id (e.g. `KL-2322: <summary>`) so it cross-references the ticket even without smart-commit integration. 5 failed rounds without a pass: stop instead, leave the pane open, and report the tab label, branch, and your best next hypothesis — do not loop beyond 5 without a human call.
